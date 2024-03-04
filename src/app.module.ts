@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './module/auth/auth.module';
 import { UsersModule } from './module/users/users.module';
 import { AuthGuard } from './module/auth/auth.guard';
+import { CatModule } from './module/cat/cat.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthGuard } from './module/auth/auth.guard';
     }),
     AuthModule,
     UsersModule,
+    CatModule,
   ],
   controllers: [AppController],
   providers: [

@@ -11,12 +11,15 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { Public } from './decorators/public.decorator';
+import { Roles } from './decorators/roles.decorator';
+import { Role } from './enums/role.enum';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
+  @Public()
   @Post('login')
   signIn(@Body() signInDto: Record<string, any>) {
     return this.authService.signIn(signInDto.username, signInDto.password);
@@ -24,6 +27,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
+  @Roles(Role.Admin)
   getProfile(@Request() req) {
     return req.user;
   }

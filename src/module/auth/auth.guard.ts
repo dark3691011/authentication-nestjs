@@ -9,6 +9,8 @@ import { jwtConstants } from './constants';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from './decorators/public.decorator';
+import { Role } from './enums/role.enum';
+import { ROLES_KEY } from './decorators/roles.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,9 +21,16 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     if (isPublic) {
       // 💡 See this condition
       return true;
+    }
+    if (!requiredRoles) {
+      // return true;
     }
 
     const request = context.switchToHttp().getRequest();
@@ -39,6 +48,10 @@ export class AuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException();
     }
+    if (requiredRoles)
+      return requiredRoles.some((role) =>
+        request['user']?.roles?.includes(role),
+      );
     return true;
   }
 
